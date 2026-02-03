@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Python Learning Page</title>
+    <title>Beginner Python Lessons</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #f7b42c 0%, #fc575e 100%);
+            background: linear-gradient(135deg, #fc575e 0%, #2d7be5 100%);
             margin: 0;
             padding: 0;
             min-height: 100vh;
@@ -19,78 +19,64 @@
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.13);
             padding: 40px 32px 32px 32px;
-            border: 3px solid #2d7be5;
+            border: 3px solid #fc575e;
         }
         h1 {
-            color: #fc575e;
-            text-shadow: 1px 2px 0 #fff, 0 2px 8px #f7b42c;
+            color: #2d7be5;
+            text-shadow: 1px 2px 0 #fff, 0 2px 8px #fc575e;
         }
         h2 {
-            color: #2d7be5;
+            color: #fc575e;
         }
-        ul, ol {
-            line-height: 1.7;
-        }
-        .hero {
-            font-size: 1.3em;
-            margin-bottom: 24px;
-            color: #f7b42c;
-            font-weight: bold;
-            background: #2d7be5;
-            padding: 10px 18px;
-            border-radius: 8px;
-            display: inline-block;
-            box-shadow: 0 2px 8px rgba(44,123,229,0.13);
-        }
-        .nav-buttons {
-            margin-top: 32px;
-            display: flex;
-            gap: 18px;
-        }
-        .nav-btn {
+        .back-btn {
             background: linear-gradient(90deg, #2d7be5 0%, #fc575e 100%);
             color: #fff;
             border: none;
             border-radius: 6px;
-            padding: 12px 28px;
+            padding: 10px 24px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
+            margin-bottom: 24px;
             transition: background 0.2s, transform 0.2s;
-            box-shadow: 0 2px 8px rgba(252,87,94,0.13);
         }
-        .nav-btn:hover {
+        .back-btn:hover {
             background: linear-gradient(90deg, #fc575e 0%, #2d7be5 100%);
             transform: translateY(-2px) scale(1.04);
+        }
+        ul {
+            line-height: 1.7;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to My Learning Page!</h1>
-        <div class="hero">Learn Python from Zero to Hero 🚀</div>
-        <p>This page is dedicated to helping you master Python, whether you're a complete beginner or looking to sharpen your skills.</p>
-        <h2>What You'll Find Here:</h2>
+        <button class="back-btn" onclick="window.location.href='index.html'">&#8592; Back to Home</button>
+        <h1>Beginner Python Lessons</h1>
+        <h2>Lesson 1: Introduction to Python</h2>
         <ul>
-            <li>Step-by-step Python tutorials</li>
-            <li>Hands-on coding exercises</li>
-            <li>Project ideas and solutions</li>
-            <li>Tips for best practices</li>
-            <li>Resources for further learning</li>
+            <li>What is Python?</li>
+            <li>Installing Python</li>
+            <li>Running your first Python program</li>
         </ul>
-        <h2>Getting Started</h2>
-        <ol>
-            <li>Install Python on your computer</li>
-            <li>Follow the beginner tutorials</li>
-            <li>Practice with exercises</li>
-            <li>Build your own projects</li>
-        </ol>
-        <p>Ready to start your journey? Let's go from zero to hero together!</p>
-        <div class="nav-buttons">
-            <button class="nav-btn" onclick="window.location.href='beginner.html'">Beginner Lessons</button>
-            <button class="nav-btn" onclick="window.location.href='exercises.html'">Practice Exercises</button>
-            <button class="nav-btn" onclick="window.location.href='projects.html'">Project Ideas</button>
-        </div>
+        <h2>Lesson 2: Basic Syntax</h2>
+        <ul>
+            <li>Variables and Data Types</li>
+            <li>Printing Output</li>
+            <li>Comments</li>
+        </ul>
+        <h2>Lesson 3: Control Structures</h2>
+        <ul>
+            <li>If Statements</li>
+            <li>For and While Loops</li>
+        </ul>
+        <h2>Lesson 4: Functions</h2>
+        <ul>
+            <li>Defining Functions</li>
+            <li>Calling Functions</li>
+            <li>Function Arguments</li>
+        </ul>
+        <p>More lessons coming soon! Practice each topic and try writing your own code.</p>
     </div>
 </body>
 </html>
