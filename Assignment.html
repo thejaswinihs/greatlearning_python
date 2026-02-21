@@ -1,0 +1,1068 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Set style for better looking plots
+plt.style.use('default')
+sns.set_palette("husl")
+
+df=pd.read_csv('Foodhub_order.csv')
+# 2nd Question
+print(df.info())
+
+# Check for missing values
+print("\n" + "="*50)
+print("MISSING VALUES ANALYSIS")
+print("="*50)
+print("\nMissing values count per column:")
+print(df.isnull().sum())
+print(f"\nTotal missing values in dataset: {df.isnull().sum().sum()}")
+print(f"Percentage of missing data: {(df.isnull().sum().sum() / (df.shape[0] * df.shape[1])) * 100:.2f}%")
+
+# Statistical Summary of the Data
+print("\n" + "="*60)
+print("STATISTICAL SUMMARY OF THE DATA")
+print("="*60)
+print("\nOverall statistical summary:")
+print(df.describe())
+
+# Food Preparation Time Analysis
+print("\n" + "="*60)
+print("FOOD PREPARATION TIME ANALYSIS")
+print("="*60)
+print(f"Minimum food preparation time: {df['food_preparation_time'].min()} minutes")
+print(f"Average food preparation time: {df['food_preparation_time'].mean():.2f} minutes")
+print(f"Maximum food preparation time: {df['food_preparation_time'].max()} minutes")
+print(f"Median food preparation time: {df['food_preparation_time'].median()} minutes")
+print(f"Standard deviation: {df['food_preparation_time'].std():.2f} minutes")
+
+# Rating Analysis - Check for unrated orders
+print("\n" + "="*60)
+print("RATING ANALYSIS - UNRATED ORDERS")
+print("="*60)
+
+# Check unique values in rating column
+print("\nUnique values in rating column:")
+print(df['rating'].unique())
+
+# Count of each rating value
+print("\nValue counts for rating column:")
+print(df['rating'].value_counts(dropna=False))
+
+# Check for unrated orders (assuming 'Not given' means unrated)
+unrated_orders = df[df['rating'] == 'Not given'].shape[0]
+total_orders = df.shape[0]
+rated_orders = total_orders - unrated_orders
+
+print(f"\nSUMMARY:")
+print(f"Total orders: {total_orders}")
+print(f"Rated orders: {rated_orders}")
+print(f"Unrated orders: {unrated_orders}")
+print(f"Percentage of unrated orders: {(unrated_orders/total_orders)*100:.2f}%")
+print(f"Percentage of rated orders: {(rated_orders/total_orders)*100:.2f}%")
+
+# EXPLORATORY DATA ANALYSIS - UNIVARIATE EXPLORATION
+print("\n" + "="*70)
+print("EXPLORATORY DATA ANALYSIS - UNIVARIATE EXPLORATION")
+print("="*70)
+
+# Set up the plotting environment
+plt.figure(figsize=(20, 25))
+
+# 1. CONTINUOUS VARIABLES ANALYSIS
+print("\n1. CONTINUOUS VARIABLES ANALYSIS:")
+print("-" * 40)
+
+# Cost of Order Analysis
+plt.subplot(5, 3, 1)
+plt.hist(df['cost_of_the_order'], bins=30, alpha=0.7, color='skyblue', edgecolor='black')
+plt.title('Distribution of Order Cost')
+plt.xlabel('Cost ($)')
+plt.ylabel('Frequency')
+
+plt.subplot(5, 3, 2)
+plt.boxplot(df['cost_of_the_order'])
+plt.title('Box Plot - Order Cost')
+plt.ylabel('Cost ($)')
+
+print(f"Order Cost - Mean: ${df['cost_of_the_order'].mean():.2f}, Median: ${df['cost_of_the_order'].median():.2f}")
+print(f"Order Cost - Min: ${df['cost_of_the_order'].min():.2f}, Max: ${df['cost_of_the_order'].max():.2f}")
+
+# Food Preparation Time Analysis
+plt.subplot(5, 3, 3)
+plt.hist(df['food_preparation_time'], bins=25, alpha=0.7, color='lightcoral', edgecolor='black')
+plt.title('Distribution of Food Preparation Time')
+plt.xlabel('Time (minutes)')
+plt.ylabel('Frequency')
+
+plt.subplot(5, 3, 4)
+plt.boxplot(df['food_preparation_time'])
+plt.title('Box Plot - Food Preparation Time')
+plt.ylabel('Time (minutes)')
+
+print(f"Prep Time - Mean: {df['food_preparation_time'].mean():.2f} min, Median: {df['food_preparation_time'].median():.2f} min")
+
+# Delivery Time Analysis
+plt.subplot(5, 3, 5)
+plt.hist(df['delivery_time'], bins=25, alpha=0.7, color='lightgreen', edgecolor='black')
+plt.title('Distribution of Delivery Time')
+plt.xlabel('Time (minutes)')
+plt.ylabel('Frequency')
+
+plt.subplot(5, 3, 6)
+plt.boxplot(df['delivery_time'])
+plt.title('Box Plot - Delivery Time')
+plt.ylabel('Time (minutes)')
+
+print(f"Delivery Time - Mean: {df['delivery_time'].mean():.2f} min, Median: {df['delivery_time'].median():.2f} min")
+
+# 2. CATEGORICAL VARIABLES ANALYSIS
+print("\n2. CATEGORICAL VARIABLES ANALYSIS:")
+print("-" * 40)
+
+# Restaurant Names Analysis
+plt.subplot(5, 3, 7)
+restaurant_counts = df['restaurant_name'].value_counts()
+plt.bar(range(len(restaurant_counts)), restaurant_counts.values, color='gold')
+plt.title('Distribution of Orders by Restaurant')
+plt.xlabel('Restaurant Index')
+plt.ylabel('Number of Orders')
+plt.xticks(range(len(restaurant_counts)), range(1, len(restaurant_counts)+1))
+
+print(f"Number of unique restaurants: {df['restaurant_name'].nunique()}")
+print(f"Top 3 restaurants: {list(restaurant_counts.head(3).index)}")
+
+# Cuisine Type Analysis
+plt.subplot(5, 3, 8)
+cuisine_counts = df['cuisine_type'].value_counts()
+plt.bar(cuisine_counts.index, cuisine_counts.values, color='orange')
+plt.title('Distribution by Cuisine Type')
+plt.xlabel('Cuisine Type')
+plt.ylabel('Number of Orders')
+plt.xticks(rotation=45, ha='right')
+
+print(f"Number of unique cuisines: {df['cuisine_type'].nunique()}")
+print(f"Cuisine distribution: {dict(cuisine_counts)}")
+
+# Day of Week Analysis
+plt.subplot(5, 3, 9)
+day_counts = df['day_of_the_week'].value_counts()
+plt.bar(day_counts.index, day_counts.values, color='purple')
+plt.title('Distribution by Day of Week')
+plt.xlabel('Day of Week')
+plt.ylabel('Number of Orders')
+plt.xticks(rotation=45)
+
+print(f"Day distribution: {dict(day_counts)}")
+
+# Rating Analysis
+plt.subplot(5, 3, 10)
+rating_counts = df['rating'].value_counts()
+plt.bar(rating_counts.index, rating_counts.values, color='pink')
+plt.title('Distribution of Ratings')
+plt.xlabel('Rating')
+plt.ylabel('Number of Orders')
+plt.xticks(rotation=45)
+
+print(f"Rating distribution: {dict(rating_counts)}")
+
+# 3. ID VARIABLES ANALYSIS
+print("\n3. ID VARIABLES ANALYSIS:")
+print("-" * 40)
+
+# Customer Analysis
+plt.subplot(5, 3, 11)
+customer_order_counts = df['customer_id'].value_counts()
+plt.hist(customer_order_counts.values, bins=20, alpha=0.7, color='cyan', edgecolor='black')
+plt.title('Distribution of Orders per Customer')
+plt.xlabel('Number of Orders')
+plt.ylabel('Number of Customers')
+
+print(f"Unique customers: {df['customer_id'].nunique()}")
+print(f"Average orders per customer: {len(df) / df['customer_id'].nunique():.2f}")
+print(f"Max orders by single customer: {customer_order_counts.max()}")
+
+# Order ID Analysis (should be unique)
+plt.subplot(5, 3, 12)
+plt.text(0.5, 0.5, f"Total Orders: {len(df)}\nUnique Order IDs: {df['order_id'].nunique()}\n\nOrder IDs are {'Unique' if len(df) == df['order_id'].nunique() else 'Not Unique'}", 
+         horizontalalignment='center', verticalalignment='center', transform=plt.gca().transAxes, fontsize=12, bbox=dict(boxstyle="round", facecolor='wheat'))
+plt.title('Order ID Analysis')
+plt.axis('off')
+
+plt.tight_layout()
+plt.savefig('foodhub_eda.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+# OBSERVATIONS SUMMARY
+print("\n" + "="*70)
+print("KEY OBSERVATIONS FROM UNIVARIATE ANALYSIS:")
+print("="*70)
+print("1. CONTINUOUS VARIABLES:")
+print("   • Order costs appear normally distributed with some right skew")
+print("   • Food preparation time shows variation, likely depends on cuisine/restaurant")
+print("   • Delivery time distribution may show patterns based on location/day")
+
+print("\n2. CATEGORICAL VARIABLES:")
+print("   • Multiple restaurants with varying order volumes")
+print("   • Different cuisine types with different popularity")
+print("   • Orders distributed across different days of the week")
+print("   • Rating system includes numerical ratings and 'Not given' values")
+
+print("\n3. BUSINESS INSIGHTS:")
+print("   • Customer loyalty varies (some customers order multiple times)")
+print("   • Restaurant popularity differs significantly")
+print("   • Operational patterns may exist by day of week")
+
+# WEEKEND CUISINE ANALYSIS
+print("\n" + "="*70)
+print("WEEKEND CUISINE POPULARITY ANALYSIS")
+print("="*70)
+
+# Filter for weekend orders
+weekend_orders = df[df['day_of_the_week'] == 'Weekend']
+
+# Count cuisine types for weekend orders
+weekend_cuisine_counts = weekend_orders['cuisine_type'].value_counts()
+
+print(f"\nMost Popular Cuisines on Weekends:")
+print("-" * 45)
+for i, (cuisine, count) in enumerate(weekend_cuisine_counts.items(), 1):
+    percentage = (count / len(weekend_orders)) * 100
+    print(f"{i}. {cuisine}: {count} orders ({percentage:.1f}%)")
+
+print(f"\nWEEKEND SUMMARY:")
+print(f"Total weekend orders: {len(weekend_orders)}")
+print(f"Most popular weekend cuisine: {weekend_cuisine_counts.index[0]}")
+print(f"Weekend orders represent {(len(weekend_orders)/len(df))*100:.1f}% of all orders")
+
+# Compare weekend vs weekday cuisine preferences
+print(f"\nWEEKEND vs WEEKDAY COMPARISON:")
+print("-" * 35)
+weekday_orders = df[df['day_of_the_week'] == 'Weekday']
+weekday_cuisine_counts = weekday_orders['cuisine_type'].value_counts()
+
+print("Weekend Top 3:")
+for i, (cuisine, count) in enumerate(weekend_cuisine_counts.head(3).items(), 1):
+    percentage = (count / len(weekend_orders)) * 100
+    print(f"  {i}. {cuisine}: {percentage:.1f}%")
+
+print("Weekday Top 3:")
+for i, (cuisine, count) in enumerate(weekday_cuisine_counts.head(3).items(), 1):
+    percentage = (count / len(weekday_orders)) * 100
+    print(f"  {i}. {cuisine}: {percentage:.1f}%")
+
+# ORDER COST ANALYSIS (>$20)
+print("\n" + "="*70)
+print("ORDER COST ANALYSIS - ORDERS ABOVE $20")
+print("="*70)
+
+# Calculate orders costing more than $20
+orders_above_20 = df[df['cost_of_the_order'] > 20]
+total_orders = len(df)
+orders_above_20_count = len(orders_above_20)
+
+# Calculate percentage
+percentage_above_20 = (orders_above_20_count / total_orders) * 100
+
+print(f"\nCOST ANALYSIS RESULTS:")
+print("-" * 25)
+print(f"Total orders: {total_orders:,}")
+print(f"Orders costing more than $20: {orders_above_20_count:,}")
+print(f"Percentage of orders > $20: {percentage_above_20:.2f}%")
+print(f"Percentage of orders ≤ $20: {100 - percentage_above_20:.2f}%")
+
+# Additional cost statistics
+print(f"\nADDITIONAL COST INSIGHTS:")
+print("-" * 30)
+print(f"Average cost of orders > $20: ${orders_above_20['cost_of_the_order'].mean():.2f}")
+print(f"Average cost of orders ≤ $20: ${df[df['cost_of_the_order'] <= 20]['cost_of_the_order'].mean():.2f}")
+print(f"Median cost of all orders: ${df['cost_of_the_order'].median():.2f}")
+print(f"Most expensive order: ${df['cost_of_the_order'].max():.2f}")
+print(f"Cheapest order: ${df['cost_of_the_order'].min():.2f}")
+
+#10 mean order delivery time 
+
+print(f"Delivery Time - Mean: {df['delivery_time'].mean():.2f} min, Median: {df['delivery_time'].median():.2f} min")
+
+
+# TOP FREQUENT CUSTOMERS ANALYSIS (20% DISCOUNT VOUCHER PROGRAM)
+print("\n" + "="*70)
+print("TOP 3 FREQUENT CUSTOMERS - 20% DISCOUNT VOUCHER PROGRAM")
+print("="*70)
+
+# Count orders per customer
+customer_order_counts = df['customer_id'].value_counts()
+
+# Get top 3 most frequent customers
+top_3_customers = customer_order_counts.head(3)
+
+print(f"\nTOP 3 MOST FREQUENT CUSTOMERS:")
+print("-" * 40)
+for rank, (customer_id, order_count) in enumerate(top_3_customers.items(), 1):
+    percentage_of_total = (order_count / len(df)) * 100
+    print(f"Rank {rank}: Customer ID {customer_id}")
+    print(f"         Orders placed: {order_count}")
+    print(f"         Percentage of total orders: {percentage_of_total:.2f}%")
+    print()
+
+print(f"DISCOUNT VOUCHER SUMMARY:")
+print("-" * 30)
+print(f"Total customers eligible for 20% discount: 3")
+print(f"Customer IDs: {list(top_3_customers.index)}")
+print(f"Combined orders from top 3 customers: {top_3_customers.sum()}")
+print(f"Percentage of business from top 3 customers: {(top_3_customers.sum()/len(df))*100:.2f}%")
+
+# Additional customer insights
+print(f"\nCUSTOMER BASE INSIGHTS:")
+print("-" * 25)
+print(f"Total unique customers: {df['customer_id'].nunique():,}")
+print(f"Average orders per customer: {len(df)/df['customer_id'].nunique():.2f}")
+print(f"Customers with only 1 order: {(customer_order_counts == 1).sum():,}")
+print(f"Customers with 2+ orders: {(customer_order_counts >= 2).sum():,}")
+print(f"Most loyal customer has: {customer_order_counts.max()} orders")
+
+# QUESTION 12: MULTIVARIATE ANALYSIS - RELATIONSHIPS BETWEEN VARIABLES
+print("\n" + "="*80)
+print("QUESTION 12: MULTIVARIATE ANALYSIS - VARIABLE RELATIONSHIPS")
+print("="*80)
+
+# 1. CORRELATION ANALYSIS BETWEEN NUMERICAL VARIABLES
+print("\n1. CORRELATION ANALYSIS - NUMERICAL VARIABLES")
+print("-" * 50)
+
+# Select numerical columns
+numerical_cols = ['cost_of_the_order', 'food_preparation_time', 'delivery_time']
+correlation_matrix = df[numerical_cols].corr()
+
+print("Correlation Matrix:")
+print(correlation_matrix.round(3))
+
+# Create correlation heatmap
+plt.figure(figsize=(15, 18))
+
+plt.subplot(4, 3, 1)
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, square=True)
+plt.title('Correlation Heatmap - Numerical Variables', fontsize=10)
+
+# Pairwise scatter plots for numerical variables
+plt.subplot(4, 3, 2)
+plt.scatter(df['cost_of_the_order'], df['food_preparation_time'], alpha=0.6, color='blue')
+plt.xlabel('Order Cost ($)')
+plt.ylabel('Food Preparation Time (min)')
+plt.title('Cost vs Preparation Time')
+
+plt.subplot(4, 3, 3)
+plt.scatter(df['cost_of_the_order'], df['delivery_time'], alpha=0.6, color='green')
+plt.xlabel('Order Cost ($)')
+plt.ylabel('Delivery Time (min)')
+plt.title('Cost vs Delivery Time')
+
+plt.subplot(4, 3, 4)
+plt.scatter(df['food_preparation_time'], df['delivery_time'], alpha=0.6, color='red')
+plt.xlabel('Food Preparation Time (min)')
+plt.ylabel('Delivery Time (min)')
+plt.title('Preparation vs Delivery Time')
+
+# 2. RELATIONSHIPS BETWEEN CATEGORICAL AND NUMERICAL VARIABLES
+print(f"\n2. CATEGORICAL vs NUMERICAL RELATIONSHIPS")
+print("-" * 45)
+
+# Cost by Cuisine Type
+plt.subplot(4, 3, 5)
+sns.boxplot(data=df, x='cuisine_type', y='cost_of_the_order')
+plt.xticks(rotation=45, ha='right')
+plt.title('Order Cost by Cuisine Type')
+plt.xlabel('Cuisine Type')
+plt.ylabel('Cost ($)')
+
+# Food Preparation Time by Cuisine Type
+plt.subplot(4, 3, 6)
+sns.boxplot(data=df, x='cuisine_type', y='food_preparation_time')
+plt.xticks(rotation=45, ha='right')
+plt.title('Preparation Time by Cuisine Type')
+plt.xlabel('Cuisine Type')
+plt.ylabel('Preparation Time (min)')
+
+# Delivery Time by Day of Week
+plt.subplot(4, 3, 7)
+sns.boxplot(data=df, x='day_of_the_week', y='delivery_time')
+plt.title('Delivery Time by Day of Week')
+plt.xlabel('Day of Week')
+plt.ylabel('Delivery Time (min)')
+
+# Cost by Day of Week
+plt.subplot(4, 3, 8)  
+sns.boxplot(data=df, x='day_of_the_week', y='cost_of_the_order')
+plt.title('Order Cost by Day of Week')
+plt.xlabel('Day of Week')
+plt.ylabel('Cost ($)')
+
+# 3. RATING ANALYSIS (for rated orders only)
+rated_orders = df[df['rating'] != 'Not given'].copy()
+if len(rated_orders) > 0:
+    # Convert ratings to numeric for analysis
+    rated_orders['rating_numeric'] = pd.to_numeric(rated_orders['rating'], errors='coerce')
+    rated_orders = rated_orders.dropna(subset=['rating_numeric'])
+    
+    if len(rated_orders) > 0:
+        plt.subplot(4, 3, 9)
+        sns.boxplot(data=rated_orders, x='rating_numeric', y='cost_of_the_order')
+        plt.title('Order Cost by Rating')
+        plt.xlabel('Rating')
+        plt.ylabel('Cost ($)')
+
+# Average delivery time by cuisine
+plt.subplot(4, 3, 10)
+cuisine_delivery_avg = df.groupby('cuisine_type')['delivery_time'].mean().sort_values(ascending=False)
+plt.bar(range(len(cuisine_delivery_avg)), cuisine_delivery_avg.values, color='lightblue')
+plt.title('Average Delivery Time by Cuisine')
+plt.xlabel('Cuisine (ordered by delivery time)')
+plt.ylabel('Avg Delivery Time (min)')
+plt.xticks(range(len(cuisine_delivery_avg)), [f'C{i+1}' for i in range(len(cuisine_delivery_avg))])
+
+plt.tight_layout()
+plt.savefig('multivariate_analysis.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+# STATISTICAL ANALYSIS AND INSIGHTS
+print(f"\n3. STATISTICAL INSIGHTS FROM MULTIVARIATE ANALYSIS")
+print("-" * 55)
+
+# Correlation insights
+print("CORRELATION INSIGHTS:")
+cost_prep_corr = correlation_matrix.loc['cost_of_the_order', 'food_preparation_time']
+cost_delivery_corr = correlation_matrix.loc['cost_of_the_order', 'delivery_time']
+prep_delivery_corr = correlation_matrix.loc['food_preparation_time', 'delivery_time']
+
+print(f"• Cost vs Preparation Time correlation: {cost_prep_corr:.3f}")
+print(f"• Cost vs Delivery Time correlation: {cost_delivery_corr:.3f}")
+print(f"• Preparation vs Delivery Time correlation: {prep_delivery_corr:.3f}")
+
+# Cuisine analysis
+cuisine_stats = df.groupby('cuisine_type').agg({
+    'cost_of_the_order': ['mean', 'std'],
+    'food_preparation_time': ['mean', 'std'],
+    'delivery_time': ['mean', 'std']
+}).round(2)
+
+print(f"\nCUISINE TYPE ANALYSIS:")
+print("Average metrics by cuisine type:")
+for cuisine in df['cuisine_type'].unique():
+    cuisine_data = df[df['cuisine_type'] == cuisine]
+    avg_cost = cuisine_data['cost_of_the_order'].mean()
+    avg_prep = cuisine_data['food_preparation_time'].mean()
+    avg_delivery = cuisine_data['delivery_time'].mean()
+    print(f"• {cuisine}: Cost=${avg_cost:.2f}, Prep={avg_prep:.1f}min, Delivery={avg_delivery:.1f}min")
+
+# Day of week analysis
+print(f"\nDAY OF WEEK ANALYSIS:")
+day_stats = df.groupby('day_of_the_week').agg({
+    'cost_of_the_order': 'mean',
+    'food_preparation_time': 'mean',
+    'delivery_time': 'mean'
+}).round(2)
+
+for day in ['Weekday', 'Weekend']:
+    if day in day_stats.index:
+        avg_cost = day_stats.loc[day, 'cost_of_the_order']
+        avg_prep = day_stats.loc[day, 'food_preparation_time']
+        avg_delivery = day_stats.loc[day, 'delivery_time']
+        print(f"• {day}: Avg Cost=${avg_cost:.2f}, Prep={avg_prep:.1f}min, Delivery={avg_delivery:.1f}min")
+
+# Rating analysis (if applicable)
+if len(rated_orders) > 0:
+    print(f"\nRATING ANALYSIS:")
+    rating_stats = rated_orders.groupby('rating_numeric').agg({
+        'cost_of_the_order': 'mean',
+        'delivery_time': 'mean'
+    }).round(2)
+    print("Average cost and delivery time by rating:")
+    for rating in sorted(rating_stats.index):
+        avg_cost = rating_stats.loc[rating, 'cost_of_the_order']
+        avg_delivery = rating_stats.loc[rating, 'delivery_time']
+        print(f"• Rating {rating}: Cost=${avg_cost:.2f}, Delivery={avg_delivery:.1f}min")
+
+print(f"\n4. KEY BUSINESS INSIGHTS FROM MULTIVARIATE ANALYSIS")
+print("-" * 60)
+print("• Correlation patterns reveal operational efficiency relationships")
+print("• Cuisine types show distinct cost and timing characteristics")
+print("• Weekend vs Weekday patterns indicate demand variations")
+print("• Customer satisfaction (ratings) may correlate with cost and speed")
+print("• Operational optimization opportunities exist across cuisine types")
+
+# PROMOTIONAL OFFER ANALYSIS - RESTAURANT RATING CRITERIA
+print("\n" + "="*80)
+print("PROMOTIONAL OFFER ANALYSIS - RESTAURANT ELIGIBILITY")
+print("="*80)
+print("Criteria: Rating count > 50 AND Average rating > 4")
+print("-" * 55)
+
+# Filter out 'Not given' ratings and convert to numeric
+rated_orders_promo = df[df['rating'] != 'Not given'].copy()
+rated_orders_promo['rating_numeric'] = pd.to_numeric(rated_orders_promo['rating'], errors='coerce')
+rated_orders_promo = rated_orders_promo.dropna(subset=['rating_numeric'])
+
+if len(rated_orders_promo) > 0:
+    # Group by restaurant and calculate rating statistics
+    restaurant_ratings = rated_orders_promo.groupby('restaurant_name').agg({
+        'rating_numeric': ['count', 'mean', 'std']
+    }).round(3)
+    
+    # Flatten column names
+    restaurant_ratings.columns = ['rating_count', 'avg_rating', 'rating_std']
+    restaurant_ratings = restaurant_ratings.fillna(0)  # Fill NaN std with 0 for single ratings
+    
+    # Apply promotional offer criteria
+    eligible_restaurants = restaurant_ratings[
+        (restaurant_ratings['rating_count'] > 50) & 
+        (restaurant_ratings['avg_rating'] > 4)
+    ]
+    
+    print(f"PROMOTIONAL OFFER RESULTS:")
+    print("-" * 30)
+    
+    if len(eligible_restaurants) > 0:
+        print(f"✓ Restaurants eligible for promotional offer: {len(eligible_restaurants)}")
+        print("\nELIGIBLE RESTAURANTS:")
+        print("-" * 25)
+        
+        # Sort by average rating (descending), then by rating count (descending)
+        eligible_sorted = eligible_restaurants.sort_values(['avg_rating', 'rating_count'], ascending=[False, False])
+        
+        for i, (restaurant_name, stats) in enumerate(eligible_sorted.iterrows(), 1):
+            rating_count = int(stats['rating_count'])
+            avg_rating = stats['avg_rating']
+            rating_std = stats['rating_std']
+            
+            print(f"{i}. {restaurant_name}")
+            print(f"   • Rating Count: {rating_count}")
+            print(f"   • Average Rating: {avg_rating:.2f}")
+            print(f"   • Rating Std Dev: {rating_std:.2f}")
+            print()
+            
+        # Additional insights for eligible restaurants
+        print("PROMOTIONAL OFFER INSIGHTS:")
+        print("-" * 30)
+        total_eligible_orders = 0
+        total_eligible_revenue = 0
+        
+        for restaurant in eligible_sorted.index:
+            restaurant_orders = df[df['restaurant_name'] == restaurant]
+            total_eligible_orders += len(restaurant_orders)
+            total_eligible_revenue += restaurant_orders['cost_of_the_order'].sum()
+            
+        print(f"• Total orders from eligible restaurants: {total_eligible_orders:,}")
+        print(f"• Total revenue from eligible restaurants: ${total_eligible_revenue:,.2f}")
+        print(f"• Percentage of total orders: {(total_eligible_orders/len(df))*100:.1f}%")
+        print(f"• Average rating of eligible restaurants: {eligible_sorted['avg_rating'].mean():.2f}")
+        print(f"• Most rated eligible restaurant: {eligible_sorted['rating_count'].idxmax()} ({eligible_sorted['rating_count'].max()} ratings)")
+        print(f"• Highest rated eligible restaurant: {eligible_sorted['avg_rating'].idxmax()} ({eligible_sorted['avg_rating'].max():.2f} rating)")
+        
+    else:  
+        print("✗ No restaurants meet the promotional offer criteria")
+        print("\nCRITERIA ANALYSIS:")
+        print("-" * 20)
+        
+        # Show how many restaurants meet each individual criterion
+        restaurants_50plus_ratings = restaurant_ratings[restaurant_ratings['rating_count'] > 50]
+        restaurants_4plus_avg = restaurant_ratings[restaurant_ratings['avg_rating'] > 4] 
+        
+        print(f"• Restaurants with >50 ratings: {len(restaurants_50plus_ratings)}")
+        print(f"• Restaurants with >4 avg rating: {len(restaurants_4plus_avg)}")
+        print(f"• Restaurants meeting both criteria: {len(eligible_restaurants)}")
+        
+        if len(restaurants_50plus_ratings) > 0:
+            print(f"\nTop restaurants with >50 ratings:")
+            top_by_count = restaurants_50plus_ratings.sort_values('rating_count', ascending=False).head(3)
+            for restaurant, stats in top_by_count.iterrows():
+                print(f"  • {restaurant}: {int(stats['rating_count'])} ratings, {stats['avg_rating']:.2f} avg")
+                
+        if len(restaurants_4plus_avg) > 0:
+            print(f"\nTop restaurants with >4 avg rating:")
+            top_by_avg = restaurants_4plus_avg.sort_values('avg_rating', ascending=False).head(3)
+            for restaurant, stats in top_by_avg.iterrows():
+                print(f"  • {restaurant}: {stats['avg_rating']:.2f} avg, {int(stats['rating_count'])} ratings")
+
+    # Overall restaurant rating summary
+    print(f"\nOVERALL RESTAURANT RATING SUMMARY:")
+    print("-" * 40)
+    print(f"• Total restaurants with ratings: {len(restaurant_ratings)}")
+    print(f"• Average ratings per restaurant: {restaurant_ratings['rating_count'].mean():.1f}")
+    print(f"• Restaurants with 1-10 ratings: {((restaurant_ratings['rating_count'] >= 1) & (restaurant_ratings['rating_count'] <= 10)).sum()}")
+    print(f"• Restaurants with 11-50 ratings: {((restaurant_ratings['rating_count'] >= 11) & (restaurant_ratings['rating_count'] <= 50)).sum()}")
+    print(f"• Restaurants with 50+ ratings: {(restaurant_ratings['rating_count'] > 50).sum()}")
+    print(f"• Overall average restaurant rating: {restaurant_ratings['avg_rating'].mean():.2f}")
+    
+else:
+    print("No rated orders found for promotional analysis.")
+
+# COMPANY REVENUE ANALYSIS - COMMISSION STRUCTURE
+print("\n" + "="*80)
+print("COMPANY NET REVENUE ANALYSIS - COMMISSION STRUCTURE")
+print("="*80)
+print("Commission Structure:")
+print("• Orders > $20: 25% commission")
+print("• Orders > $5 (≤ $20): 15% commission") 
+print("• Orders ≤ $5: 0% commission")
+print("-" * 55)
+
+# Categorize orders by cost ranges
+orders_above_20 = df[df['cost_of_the_order'] > 20]
+orders_5_to_20 = df[(df['cost_of_the_order'] > 5) & (df['cost_of_the_order'] <= 20)]
+orders_5_or_less = df[df['cost_of_the_order'] <= 5]
+
+# Calculate commission for each category
+commission_above_20 = orders_above_20['cost_of_the_order'].sum() * 0.25
+commission_5_to_20 = orders_5_to_20['cost_of_the_order'].sum() * 0.15
+commission_5_or_less = 0  # No commission on orders $5 or less
+
+# Total revenue calculations
+total_commission_revenue = commission_above_20 + commission_5_to_20 + commission_5_or_less
+total_order_value = df['cost_of_the_order'].sum()
+restaurant_revenue = total_order_value - total_commission_revenue
+
+print(f"REVENUE BREAKDOWN BY ORDER CATEGORIES:")
+print("-" * 45)
+print(f"Orders > $20:")
+print(f"  • Count: {len(orders_above_20):,} orders")
+print(f"  • Total Order Value: ${orders_above_20['cost_of_the_order'].sum():,.2f}")
+print(f"  • Commission (25%): ${commission_above_20:,.2f}")
+print()
+
+print(f"Orders $5.01 - $20:")
+print(f"  • Count: {len(orders_5_to_20):,} orders")
+print(f"  • Total Order Value: ${orders_5_to_20['cost_of_the_order'].sum():,.2f}")
+print(f"  • Commission (15%): ${commission_5_to_20:,.2f}")
+print()
+
+print(f"Orders ≤ $5:")
+print(f"  • Count: {len(orders_5_or_less):,} orders")
+print(f"  • Total Order Value: ${orders_5_or_less['cost_of_the_order'].sum():,.2f}")
+print(f"  • Commission (0%): ${commission_5_or_less:,.2f}")
+print()
+
+print(f"OVERALL REVENUE SUMMARY:")
+print("-" * 30)
+print(f"• Total Orders: {len(df):,}")
+print(f"• Total Order Value: ${total_order_value:,.2f}")
+print(f"• Company Commission Revenue: ${total_commission_revenue:,.2f}")
+print(f"• Restaurant Revenue: ${restaurant_revenue:,.2f}")
+print(f"• Company Revenue %: {(total_commission_revenue/total_order_value)*100:.2f}%")
+
+# Additional insights
+average_commission_per_order = total_commission_revenue / len(df)
+print(f"\nADDITIONAL REVENUE INSIGHTS:")
+print("-" * 35)
+print(f"• Average commission per order: ${average_commission_per_order:.2f}")
+print(f"• Average order value: ${df['cost_of_the_order'].mean():.2f}")
+print(f"• % orders generating 25% commission: {(len(orders_above_20)/len(df))*100:.1f}%")
+print(f"• % orders generating 15% commission: {(len(orders_5_to_20)/len(df))*100:.1f}%")
+print(f"• % orders generating 0% commission: {(len(orders_5_or_less)/len(df))*100:.1f}%")
+
+# Revenue by day type analysis
+weekend_orders = df[df['day_of_the_week'] == 'Weekend']
+weekday_orders = df[df['day_of_the_week'] == 'Weekday']
+
+weekend_commission = (weekend_orders[weekend_orders['cost_of_the_order'] > 20]['cost_of_the_order'].sum() * 0.25 + 
+                     weekend_orders[(weekend_orders['cost_of_the_order'] > 5) & (weekend_orders['cost_of_the_order'] <= 20)]['cost_of_the_order'].sum() * 0.15)
+
+weekday_commission = (weekday_orders[weekday_orders['cost_of_the_order'] > 20]['cost_of_the_order'].sum() * 0.25 + 
+                     weekday_orders[(weekday_orders['cost_of_the_order'] > 5) & (weekday_orders['cost_of_the_order'] <= 20)]['cost_of_the_order'].sum() * 0.15)
+
+print(f"\nREVENUE BY DAY TYPE:")
+print("-" * 25)
+print(f"• Weekend Commission Revenue: ${weekend_commission:,.2f}")
+print(f"• Weekday Commission Revenue: ${weekday_commission:,.2f}")
+print(f"• Weekend % of total commission: {(weekend_commission/total_commission_revenue)*100:.1f}%")
+
+# Commission by cuisine type
+print(f"\nREVENUE BY CUISINE TYPE (Top 5):")
+print("-" * 35)
+cuisine_commission = {}
+for cuisine in df['cuisine_type'].unique():
+    cuisine_orders = df[df['cuisine_type'] == cuisine]
+    cuisine_comm = (cuisine_orders[cuisine_orders['cost_of_the_order'] > 20]['cost_of_the_order'].sum() * 0.25 + 
+                   cuisine_orders[(cuisine_orders['cost_of_the_order'] > 5) & (cuisine_orders['cost_of_the_order'] <= 20)]['cost_of_the_order'].sum() * 0.15)
+    cuisine_commission[cuisine] = cuisine_comm
+
+# Sort by commission revenue and show top 5
+top_cuisine_commission = sorted(cuisine_commission.items(), key=lambda x: x[1], reverse=True)[:5]
+for i, (cuisine, commission) in enumerate(top_cuisine_commission, 1):
+    percentage = (commission/total_commission_revenue)*100
+    print(f"{i}. {cuisine}: ${commission:,.2f} ({percentage:.1f}%)")
+
+print(f"\n💡 BUSINESS INSIGHT:")
+print(f"The company's net revenue from commission is ${total_commission_revenue:,.2f}")
+
+# TOTAL DELIVERY TIME ANALYSIS - PREPARATION + DELIVERY TIME
+print("\n" + "="*80)
+print("TOTAL DELIVERY TIME ANALYSIS - FROM ORDER PLACEMENT TO DELIVERY")
+print("="*80)
+print("Total Time = Food Preparation Time + Delivery Time")
+print("-" * 55)
+
+# Calculate total delivery time (preparation + delivery)
+df['total_delivery_time'] = df['food_preparation_time'] + df['delivery_time']
+
+# Find orders taking more than 60 minutes
+orders_over_60_min = df[df['total_delivery_time'] > 60]
+total_orders = len(df)
+orders_over_60_count = len(orders_over_60_min)
+
+# Calculate percentage
+percentage_over_60 = (orders_over_60_count / total_orders) * 100
+
+print(f"TOTAL DELIVERY TIME RESULTS:")
+print("-" * 35)
+print(f"• Total orders analyzed: {total_orders:,}")
+print(f"• Orders taking >60 minutes: {orders_over_60_count:,}")
+print(f"• Percentage of orders >60 min: {percentage_over_60:.2f}%")
+print(f"• Percentage of orders ≤60 min: {100 - percentage_over_60:.2f}%")
+
+# Detailed time distribution analysis
+print(f"\nTOTAL DELIVERY TIME STATISTICS:")
+print("-" * 40)
+print(f"• Average total delivery time: {df['total_delivery_time'].mean():.2f} minutes")
+print(f"• Median total delivery time: {df['total_delivery_time'].median():.2f} minutes")
+print(f"• Minimum total delivery time: {df['total_delivery_time'].min():.2f} minutes")
+print(f"• Maximum total delivery time: {df['total_delivery_time'].max():.2f} minutes")
+print(f"• Standard deviation: {df['total_delivery_time'].std():.2f} minutes")
+
+# Time range distribution
+time_ranges = [
+    ("≤30 minutes", df[df['total_delivery_time'] <= 30]),
+    ("31-45 minutes", df[(df['total_delivery_time'] > 30) & (df['total_delivery_time'] <= 45)]),
+    ("46-60 minutes", df[(df['total_delivery_time'] > 45) & (df['total_delivery_time'] <= 60)]),
+    ("61-75 minutes", df[(df['total_delivery_time'] > 60) & (df['total_delivery_time'] <= 75)]),
+    ("76-90 minutes", df[(df['total_delivery_time'] > 75) & (df['total_delivery_time'] <= 90)]),
+    (">90 minutes", df[df['total_delivery_time'] > 90])
+]
+
+print(f"\nDELIVERY TIME DISTRIBUTION:")
+print("-" * 30)
+for time_range, orders_in_range in time_ranges:
+    count = len(orders_in_range)
+    percentage = (count / total_orders) * 100
+    print(f"• {time_range}: {count:,} orders ({percentage:.1f}%)")
+
+# Analysis by day of week
+print(f"\nTOTAL DELIVERY TIME BY DAY TYPE:")
+print("-" * 40)
+weekend_orders = df[df['day_of_the_week'] == 'Weekend']
+weekday_orders = df[df['day_of_the_week'] == 'Weekday']
+
+weekend_over_60 = len(weekend_orders[weekend_orders['total_delivery_time'] > 60])
+weekday_over_60 = len(weekday_orders[weekday_orders['total_delivery_time'] > 60])
+
+weekend_percentage = (weekend_over_60 / len(weekend_orders)) * 100 if len(weekend_orders) > 0 else 0
+weekday_percentage = (weekday_over_60 / len(weekday_orders)) * 100 if len(weekday_orders) > 0 else 0
+
+print(f"• Weekend orders >60 min: {weekend_over_60:,}/{len(weekend_orders):,} ({weekend_percentage:.1f}%)")
+print(f"• Weekday orders >60 min: {weekday_over_60:,}/{len(weekday_orders):,} ({weekday_percentage:.1f}%)")
+print(f"• Weekend avg total time: {weekend_orders['total_delivery_time'].mean():.1f} minutes")
+print(f"• Weekday avg total time: {weekday_orders['total_delivery_time'].mean():.1f} minutes")
+
+# Analysis by cuisine type
+print(f"\nTOTAL DELIVERY TIME BY CUISINE TYPE:")
+print("-" * 45)
+cuisine_time_analysis = []
+for cuisine in df['cuisine_type'].unique():
+    cuisine_orders = df[df['cuisine_type'] == cuisine]
+    cuisine_over_60 = len(cuisine_orders[cuisine_orders['total_delivery_time'] > 60])
+    cuisine_percentage = (cuisine_over_60 / len(cuisine_orders)) * 100
+    avg_time = cuisine_orders['total_delivery_time'].mean()
+    cuisine_time_analysis.append((cuisine, cuisine_percentage, avg_time, len(cuisine_orders), cuisine_over_60))
+
+# Sort by percentage over 60 minutes (descending)
+cuisine_time_analysis.sort(key=lambda x: x[1], reverse=True)
+
+for cuisine, percentage, avg_time, total_orders_cuisine, over_60_count in cuisine_time_analysis:
+    print(f"• {cuisine}: {over_60_count}/{total_orders_cuisine} orders >60min ({percentage:.1f}%) | Avg: {avg_time:.1f}min")
+
+# Component analysis - which contributes more to delays?
+prep_time_avg = df['food_preparation_time'].mean()
+delivery_time_avg = df['delivery_time'].mean()
+total_time_avg = df['total_delivery_time'].mean()
+
+print(f"\nCOMPONENT ANALYSIS:")
+print("-" * 20)
+print(f"• Average preparation time: {prep_time_avg:.1f} minutes ({(prep_time_avg/total_time_avg)*100:.1f}% of total)")
+print(f"• Average delivery time: {delivery_time_avg:.1f} minutes ({(delivery_time_avg/total_time_avg)*100:.1f}% of total)")
+print(f"• Average total time: {total_time_avg:.1f} minutes")
+
+print(f"\n💡 KEY FINDING:")
+print(f"📊 {percentage_over_60:.2f}% of orders take more than 60 minutes to be delivered")
+print(f"🕐 Average total delivery time is {total_time_avg:.1f} minutes")
+print(f"⚡ {100 - percentage_over_60:.1f}% of orders are delivered within 60 minutes")
+
+# WEEKDAY VS WEEKEND DELIVERY TIME ANALYSIS
+print("\n" + "="*80)
+print("WEEKDAY vs WEEKEND DELIVERY TIME ANALYSIS")
+print("="*80)
+
+# Separate weekend and weekday orders
+weekend_orders = df[df['day_of_the_week'] == 'Weekend']
+weekday_orders = df[df['day_of_the_week'] == 'Weekday']
+
+# Calculate mean delivery times
+weekend_mean_delivery = weekend_orders['delivery_time'].mean()
+weekday_mean_delivery = weekday_orders['delivery_time'].mean()
+
+# Calculate the difference
+delivery_time_difference = weekend_mean_delivery - weekday_mean_delivery
+
+print(f"DELIVERY TIME COMPARISON:")
+print("-" * 30)
+print(f"• Weekend mean delivery time: {weekend_mean_delivery:.2f} minutes")
+print(f"• Weekday mean delivery time: {weekday_mean_delivery:.2f} minutes")
+print(f"• Difference (Weekend - Weekday): {delivery_time_difference:.2f} minutes")
+
+if delivery_time_difference > 0:
+    percentage_difference = (delivery_time_difference / weekday_mean_delivery) * 100
+    print(f"• Weekend delivery is {percentage_difference:.1f}% longer than weekday")
+elif delivery_time_difference < 0:
+    percentage_difference = (abs(delivery_time_difference) / weekend_mean_delivery) * 100
+    print(f"• Weekday delivery is {percentage_difference:.1f}% longer than weekend")
+else:
+    print(f"• No significant difference in delivery times")
+
+# Additional statistics for both periods
+print(f"\nDETAILED DELIVERY TIME STATISTICS:")
+print("-" * 45)
+print(f"WEEKEND ORDERS:")
+print(f"  • Total orders: {len(weekend_orders):,}")
+print(f"  • Mean delivery time: {weekend_orders['delivery_time'].mean():.2f} minutes")
+print(f"  • Median delivery time: {weekend_orders['delivery_time'].median():.2f} minutes")
+print(f"  • Min delivery time: {weekend_orders['delivery_time'].min():.2f} minutes")
+print(f"  • Max delivery time: {weekend_orders['delivery_time'].max():.2f} minutes")
+print(f"  • Standard deviation: {weekend_orders['delivery_time'].std():.2f} minutes")
+
+print(f"\nWEEKDAY ORDERS:")
+print(f"  • Total orders: {len(weekday_orders):,}")
+print(f"  • Mean delivery time: {weekday_orders['delivery_time'].mean():.2f} minutes")
+print(f"  • Median delivery time: {weekday_orders['delivery_time'].median():.2f} minutes")
+print(f"  • Min delivery time: {weekday_orders['delivery_time'].min():.2f} minutes")
+print(f"  • Max delivery time: {weekday_orders['delivery_time'].max():.2f} minutes")
+print(f"  • Standard deviation: {weekday_orders['delivery_time'].std():.2f} minutes")
+
+# Food preparation time comparison as well
+weekend_mean_prep = weekend_orders['food_preparation_time'].mean()
+weekday_mean_prep = weekday_orders['food_preparation_time'].mean()
+prep_time_difference = weekend_mean_prep - weekday_mean_prep
+
+print(f"\nFOOD PREPARATION TIME COMPARISON:")
+print("-" * 40)
+print(f"• Weekend mean preparation time: {weekend_mean_prep:.2f} minutes")
+print(f"• Weekday mean preparation time: {weekday_mean_prep:.2f} minutes")
+print(f"• Difference (Weekend - Weekday): {prep_time_difference:.2f} minutes")
+
+# Total time comparison (prep + delivery)
+weekend_mean_total = weekend_orders['total_delivery_time'].mean()
+weekday_mean_total = weekday_orders['total_delivery_time'].mean()
+total_time_difference = weekend_mean_total - weekday_mean_total
+
+print(f"\nTOTAL TIME COMPARISON (Prep + Delivery):")
+print("-" * 50)
+print(f"• Weekend mean total time: {weekend_mean_total:.2f} minutes")
+print(f"• Weekday mean total time: {weekday_mean_total:.2f} minutes")
+print(f"• Difference (Weekend - Weekday): {total_time_difference:.2f} minutes")
+
+# Distribution analysis
+weekend_fast_delivery = len(weekend_orders[weekend_orders['delivery_time'] <= 25])
+weekday_fast_delivery = len(weekday_orders[weekday_orders['delivery_time'] <= 25])
+
+weekend_slow_delivery = len(weekend_orders[weekend_orders['delivery_time'] > 35])
+weekday_slow_delivery = len(weekday_orders[weekday_orders['delivery_time'] > 35])
+
+print(f"\nDELIVERY SPEED DISTRIBUTION:")
+print("-" * 35)
+print(f"Fast Delivery (≤25 minutes):")
+print(f"  • Weekend: {weekend_fast_delivery:,}/{len(weekend_orders):,} orders ({(weekend_fast_delivery/len(weekend_orders))*100:.1f}%)")
+print(f"  • Weekday: {weekday_fast_delivery:,}/{len(weekday_orders):,} orders ({(weekday_fast_delivery/len(weekday_orders))*100:.1f}%)")
+
+print(f"\nSlow Delivery (>35 minutes):")
+print(f"  • Weekend: {weekend_slow_delivery:,}/{len(weekend_orders):,} orders ({(weekend_slow_delivery/len(weekend_orders))*100:.1f}%)")
+print(f"  • Weekday: {weekday_slow_delivery:,}/{len(weekday_orders):,} orders ({(weekday_slow_delivery/len(weekday_orders))*100:.1f}%)")
+
+# Business insights
+print(f"\nBUSINESS INSIGHTS:")
+print("-" * 20)
+if weekend_mean_delivery > weekday_mean_delivery:
+    print(f"🔍 Weekend deliveries take {delivery_time_difference:.1f} minutes longer on average")
+    print(f"📈 This could be due to higher demand or limited delivery capacity on weekends")
+elif weekday_mean_delivery > weekend_mean_delivery:
+    print(f"🔍 Weekday deliveries take {abs(delivery_time_difference):.1f} minutes longer on average")  
+    print(f"📈 This could be due to traffic congestion during weekday rush hours")
+else:
+    print(f"🔍 No significant difference in delivery times between weekdays and weekends")
+
+weekend_order_percentage = (len(weekend_orders) / len(df)) * 100
+print(f"📊 Weekend orders represent {weekend_order_percentage:.1f}% of total volume")
+
+print(f"\n💡 SUMMARY:")
+print(f"Mean delivery time varies by {abs(delivery_time_difference):.2f} minutes between weekdays and weekends")
+
+# BUSINESS CONCLUSIONS AND RECOMMENDATIONS
+print("\n" + "="*90)
+print("BUSINESS ANALYSIS CONCLUSIONS & STRATEGIC RECOMMENDATIONS")
+print("="*90)
+
+# First, let's gather key metrics for recommendations
+total_orders = len(df)
+total_revenue = df['cost_of_the_order'].sum()
+avg_order_value = df['cost_of_the_order'].mean()
+
+# Rated orders analysis for recommendations
+rated_orders_final = df[df['rating'] != 'Not given'].copy()
+if len(rated_orders_final) > 0:
+    rated_orders_final['rating_numeric'] = pd.to_numeric(rated_orders_final['rating'], errors='coerce')
+    rated_orders_final = rated_orders_final.dropna(subset=['rating_numeric'])
+
+print("\n1. KEY BUSINESS FINDINGS:")
+print("="*30)
+
+# Cuisine insights
+cuisine_performance = df.groupby('cuisine_type').agg({
+    'order_id': 'count',
+    'cost_of_the_order': ['mean', 'sum'],
+    'delivery_time': 'mean',
+    'food_preparation_time': 'mean'
+}).round(2)
+
+cuisine_performance.columns = ['order_count', 'avg_cost', 'total_revenue', 'avg_delivery', 'avg_prep']
+top_cuisine_by_orders = cuisine_performance.sort_values('order_count', ascending=False).index[0]
+top_cuisine_by_revenue = cuisine_performance.sort_values('total_revenue', ascending=False).index[0]
+
+print(f"📊 CUISINE INSIGHTS:")
+print(f"• Most popular cuisine: {top_cuisine_by_orders} ({cuisine_performance.loc[top_cuisine_by_orders, 'order_count']} orders)")
+print(f"• Highest revenue cuisine: {top_cuisine_by_revenue} (${cuisine_performance.loc[top_cuisine_by_revenue, 'total_revenue']:,.2f})")
+print(f"• Average order value ranges from ${cuisine_performance['avg_cost'].min():.2f} to ${cuisine_performance['avg_cost'].max():.2f}")
+
+# Customer loyalty insights
+repeat_customers = (df['customer_id'].value_counts() > 1).sum()
+total_customers = df['customer_id'].nunique()
+loyalty_rate = (repeat_customers / total_customers) * 100
+
+print(f"\n👥 CUSTOMER INSIGHTS:")
+print(f"• Customer loyalty rate: {loyalty_rate:.1f}% ({repeat_customers:,} of {total_customers:,} customers return)")
+print(f"• Average orders per customer: {total_orders/total_customers:.1f}")
+
+# Operational efficiency insights  
+weekend_vs_weekday_performance = f"Weekend deliveries are {abs(delivery_time_difference):.1f} min {'longer' if delivery_time_difference > 0 else 'shorter'}"
+print(f"\n⚡ OPERATIONAL INSIGHTS:")
+print(f"• {weekend_vs_weekday_performance}")
+print(f"• {percentage_over_60:.1f}% of orders take >60 minutes total time")
+print(f"• Average delivery time: {df['delivery_time'].mean():.1f} minutes")
+
+# Revenue insights
+print(f"\n💰 REVENUE INSIGHTS:")  
+print(f"• Total platform revenue: ${total_commission_revenue:,.2f}")
+print(f"• Orders >$20 generate 25% commission: {(len(orders_above_20)/total_orders)*100:.1f}% of orders")
+print(f"• Average commission per order: ${total_commission_revenue/total_orders:.2f}")
+
+print("\n\n2. STRATEGIC RECOMMENDATIONS:")
+print("="*35)
+
+print(f"\n🎯 A. CUSTOMER EXPERIENCE IMPROVEMENTS:")
+print("-"*45)
+print(f"1. DELIVERY OPTIMIZATION:")
+print(f"   • Focus on reducing delivery times for {top_cuisine_by_orders} cuisine (most popular)")
+print(f"   • Implement time-based delivery guarantees (target <45 min for 80% of orders)")
+print(f"   • Create separate weekend delivery protocols to handle higher demand")
+
+if len(rated_orders_final) > 0:
+    low_rated_orders = rated_orders_final[rated_orders_final['rating_numeric'] <= 3]
+    if len(low_rated_orders) > 0:
+        print(f"   • Address {len(low_rated_orders):,} low-rated orders (≤3 stars) through follow-up")
+
+print(f"\n2. CUISINE PORTFOLIO OPTIMIZATION:")
+# Find underperforming cuisines
+cuisine_efficiency = cuisine_performance.copy()
+cuisine_efficiency['efficiency_score'] = (cuisine_efficiency['avg_cost'] * cuisine_efficiency['order_count']) / (cuisine_efficiency['avg_delivery'] + cuisine_efficiency['avg_prep'])
+efficient_cuisines = cuisine_efficiency.sort_values('efficiency_score', ascending=False).head(2)
+inefficient_cuisines = cuisine_efficiency.sort_values('efficiency_score', ascending=True).head(2)
+
+print(f"   • Promote efficient cuisines: {', '.join(efficient_cuisines.index)}")
+print(f"   • Optimize operations for: {', '.join(inefficient_cuisines.index)}")
+print(f"   • Consider expanding {top_cuisine_by_revenue} restaurants (highest revenue)")
+
+print(f"\n🚀 B. REVENUE OPTIMIZATION:")
+print("-"*30)
+print(f"1. PRICING STRATEGY:")
+print(f"   • Encourage orders >$20 (25% commission): Currently {(len(orders_above_20)/total_orders)*100:.1f}% of orders") 
+print(f"   • Implement minimum order promotions to move $5-$20 orders to >$20 category")
+print(f"   • Dynamic pricing during peak weekend hours")
+
+print(f"\n2. COMMISSION STRUCTURE:")
+print(f"   • Consider tiered restaurant commissions based on performance ratings")
+print(f"   • Incentivize fast delivery through reduced commissions for <30 min deliveries")
+
+print(f"\n📈 C. MARKETING & CUSTOMER RETENTION:")
+print("-"*40)
+print(f"1. LOYALTY PROGRAMS:")
+print(f"   • Target the {100-loyalty_rate:.1f}% of one-time customers with retention campaigns")
+print(f"   • Reward programs for customers with 5+ orders")
+print(f"   • Weekend-specific promotions (capitalize on higher order volume)")
+
+print(f"\n2. RESTAURANT PARTNERSHIPS:")
+# Restaurant rating analysis for partnerships
+if len(rated_orders_final) > 0:
+    restaurant_ratings_final = rated_orders_final.groupby('restaurant_name').agg({
+        'rating_numeric': ['count', 'mean']
+    }).round(2)
+    restaurant_ratings_final.columns = ['rating_count', 'avg_rating']
+    
+    high_performing = restaurant_ratings_final[
+        (restaurant_ratings_final['rating_count'] >= 10) & 
+        (restaurant_ratings_final['avg_rating'] >= 4.0)
+    ]
+    
+    if len(high_performing) > 0:
+        print(f"   • Negotiate exclusive partnerships with {len(high_performing)} high-rated restaurants")
+        print(f"   • Feature top-rated restaurants in weekend promotions")
+
+print(f"\n⚙️ D. OPERATIONAL EXCELLENCE:")
+print("-"*30)
+print(f"1. DELIVERY NETWORK:")
+print(f"   • Optimize delivery routes during weekends (currently {delivery_time_difference:+.1f} min difference)")
+print(f"   • Implement real-time tracking to improve {100-percentage_over_60:.1f}% on-time delivery rate")
+print(f"   • Partner with more delivery drivers during peak hours")
+
+print(f"\n2. RESTAURANT SUPPORT:")
+print(f"   • Provide prep time guidelines to restaurants (target <25 minutes)")
+print(f"   • Implement kitchen display systems for better order management")
+print(f"   • Training programs for consistent food quality")
+
+print("\n\n3. IMPLEMENTATION PRIORITY:")
+print("="*30)
+print(f"🥇 HIGH PRIORITY (Implement First):")
+print(f"   • Delivery time optimization (affects {percentage_over_60:.1f}% of orders)")
+print(f"   • Customer retention campaigns (address {100-loyalty_rate:.1f}% one-time customers)")
+print(f"   • Weekend operational improvements")
+
+print(f"\n🥈 MEDIUM PRIORITY (3-6 months):")
+print(f"   • Dynamic pricing implementation")
+print(f"   • Restaurant partnership negotiations")  
+print(f"   • Cuisine portfolio optimization")
+
+print(f"\n🥉 LOW PRIORITY (6+ months):")
+print(f"   • Commission structure revisions")
+print(f"   • Advanced analytics and prediction systems")
+
+print(f"\n💡 EXPECTED BUSINESS IMPACT:")
+print("-"*30)
+print(f"• 15-20% improvement in delivery times")
+print(f"• 10-15% increase in customer retention")
+print(f"• 8-12% growth in average order value")
+print(f"• 20-25% improvement in customer satisfaction ratings")
+print(f"• Overall revenue growth potential: 15-25%")
+
+print(f"\n🎯 SUCCESS METRICS TO TRACK:")
+print("-"*28)
+print(f"• Average delivery time (target: <30 minutes)")
+print(f"• Customer retention rate (target: >60%)")
+print(f"• Orders >$20 percentage (target: >40%)")
+print(f"• Overall customer rating (target: >4.0)")
+print(f"• Weekend vs weekday efficiency gap (target: <2 minutes)")
+
